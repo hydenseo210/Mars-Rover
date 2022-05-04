@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Xunit;
 using marsrover;
@@ -6,10 +7,12 @@ namespace marsrover.Tests;
 
 public class DeployRoverTest
 {
+    DeployRover _deployRover = new DeployRover();
+    
     [Fact]
     public void GetStartingPoint_Returns_XYCoordinateAsCoordinateType()
     {
-        var _deployRover = new DeployRover();
+        
         var actual = _deployRover.GetStartingPoint();
         var expected = new int[]{1,2};
 
@@ -19,7 +22,11 @@ public class DeployRoverTest
     [Fact]
     public void GetStartingDirection_Returns_OneOf_NSEW_AtRandom()
     {
-        var directionGenerated = Enumerable.Range(0,1000).Select(x => _deployRover.GetStartingDirection).Distinct().ToArray();
+        var directionGenerated = new char[1000];
+        for (var i = 0; i < 1000; i++)
+        {
+            directionGenerated[i] = _deployRover.GetStartingDirection();
+        }
         Assert.Contains('N', directionGenerated);
         Assert.Contains('S', directionGenerated);
         Assert.Contains('W', directionGenerated);
