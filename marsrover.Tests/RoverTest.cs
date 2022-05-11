@@ -4,7 +4,7 @@ namespace marsrover.Tests;
 
 public class RoverTest
 {
-    private IVehicle _testVehicle = new Rover('N');
+    private IVehicle _testVehicle = new Rover('N', new Directions(new Commands()));
     [Theory]
     [InlineData('N','⍐')]
     [InlineData('S','⍗')]

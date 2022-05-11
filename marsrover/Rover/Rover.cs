@@ -1,12 +1,18 @@
 namespace marsrover;
 public class Rover : IVehicle
 {
-    public char _currentDirection {private get; set;} = 'N';
-    IDirections _directions = new Directions();
-
-    public Rover(char CurrentDirection)
+    public char _currentDirection { get; set;} = 'N';
+    IDirections _directions;
+    CollisionDetectionSensor _collisionDetectionSensor = new CollisionDetectionSensor();
+    public Rover(char CurrentDirection, IDirections Directions)
     {
+        _directions = Directions;
         _currentDirection = CurrentDirection;
+    }
+
+    public bool CollisionDetectedAt(Location location)
+    {
+        return _collisionDetectionSensor.CheckCollision(location);
     }
 
     public void ChangeDirection(char NewDirection)
