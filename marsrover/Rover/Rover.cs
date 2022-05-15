@@ -4,6 +4,9 @@ public class Rover : IVehicle
     public char _currentDirection { get; set;} = 'N';
     IDirections _directions;
     CollisionDetectionSensor _collisionDetectionSensor = new CollisionDetectionSensor();
+    MovingSensor _movingSensor = new MovingSensor();
+    TurningSensor _turningSensor = new TurningSensor();
+
     public Rover(char CurrentDirection, IDirections Directions)
     {
         _directions = Directions;
@@ -35,25 +38,15 @@ public class Rover : IVehicle
                 return '⍐';
         }
     }
-    public char Action(char Command)
+    public char Action(char command)
     {
-        switch (_currentDirection)
+        var movingCommand = _movingSensor.CheckMovement(_currentDirection, command);
+        if (movingCommand == 'h')
         {
-            case 'N':
-                _currentDirection = _directions.WhenFacingNorth(Command).Item2;
-                return _directions.WhenFacingNorth(Command).Item1;
-            case 'S':
-                _currentDirection = _directions.WhenFacingSouth(Command).Item2;
-                return _directions.WhenFacingSouth(Command).Item1;
-            case 'E':
-                _currentDirection = _directions.WhenFacingEast(Command).Item2;
-                return _directions.WhenFacingEast(Command).Item1;
-            case 'W':
-                _currentDirection = _directions.WhenFacingWest(Command).Item2;
-                return _directions.WhenFacingWest(Command).Item1;
-            default:
-                throw new Exception();
+            return _turningSensor.CheckMovement(_currentDirection, command);
         }
+        return movingCommand;
         
     }
+    
 }

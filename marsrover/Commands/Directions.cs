@@ -2,11 +2,7 @@ using System.Windows.Input;
 namespace marsrover;
 public class Directions : IDirections
 {
-    ICommands _command;
-    public Directions(ICommands Command)
-    {
-        _command = Command;
-    }
+    
     public (char,char) WhenFacingNorth(char Command)
     {
         switch (Command)

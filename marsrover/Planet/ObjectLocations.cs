@@ -8,7 +8,6 @@ public class ObjectLocations
   {
     LocationToObject = new Dictionary<Location, IPrintable>();
     ObjectToLocation = new Dictionary<IPrintable, Location>();
-    //ObstacleToLocation = new Dictionary<IObject, Location>();
   }
 
   public void Add(IPrintable Object, Location location) 
@@ -30,10 +29,10 @@ public class ObjectLocations
 
   public void Move(IPrintable Object, Location NewLocation)
   {
-    Location OldLocation = LocationOf(Object);
+    Location OldLocation = ObjectToLocation[Object];
+    ObjectToLocation[Object] = NewLocation;
     LocationToObject.Remove(OldLocation);
     LocationToObject.Add(NewLocation, Object);
-    ObjectToLocation[Object] = NewLocation;
   }
 
   public bool IsAObjectAt(Location location) 

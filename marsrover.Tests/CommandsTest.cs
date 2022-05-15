@@ -10,7 +10,7 @@ public class CommandsTest
     {
         var _commands = new Commands();
         var actual = _commands.ReturnCommands();
-        var expected = new []{'N','N','S','E','W','W'};
+        var expected = new []{'N','N','N','N','N','N','S','E','W','W'};
 
         Assert.Equal(expected, actual);
         // consider mock or stub as input

@@ -8,7 +8,6 @@ namespace marsrover.Tests;
 public class PlanetTest
 {
     Planet _planet = new Planet(10, 10);
-    ICommands _command = new Commands();
     
     [Fact]
     public void Draw_Returns_BoardToConsole()
@@ -21,7 +20,7 @@ public class PlanetTest
     [Fact]
     public void AddObject_AddsVehicle_InTheCorrectLocation()
     {
-        IVehicle _testRover = new Rover('N', new DummyDirections());
+        IVehicle _testRover = new Rover('N', new Directions());
         Location _testLocation = new Location(_planet, 2 , 2);
         _planet.AddObject(_testRover, _testLocation);
 
@@ -33,7 +32,7 @@ public class PlanetTest
     [Fact]
     public void GetObjectAt_ReturnsVehicle_AtLocation()
     {
-        IVehicle _testRover = new Rover('N', new DummyDirections());
+        IVehicle _testRover = new Rover('N', new Directions());
         Location _testLocation = new Location(_planet, 2 , 2);
         _planet.AddObject(_testRover, _testLocation);
 
@@ -44,72 +43,69 @@ public class PlanetTest
     }
 
     [Theory]
-    [InlineData(0, 0, 'N', 9, 9)]
-    [InlineData(9, 9, 'S', 0, 0)]
-    public void CheckWrapping_Returns_CorrectLocation_When_VehicleMovesOutOfBounds(int X, int Y, char Direction, int ExpectedX, int ExpectedY)
+    [InlineData(10, 10, 11, 0)]
+    [InlineData(20, 10, -1, 19)]
+    public void CheckWrapping_ReturnsPotentialXCoordinate(int width, int height, int potentialXCoordinate, int expectedCoordinate)
     {
-        IVehicle _testRover = new Rover(Direction, new DummyDirections());
-        Location _testLocation = new Location(_planet, X , Y);
-        _planet.AddObject(_testRover, _testLocation);
+        // Given
+        Planet testPlanet = new Planet(width , height);
+        // When
+        var actualCoordinate = _planet.CheckWrapping(potentialXCoordinate, width);
+        // Then
+        Assert.Equal(expectedCoordinate, actualCoordinate);
+    }
 
-        _planet.MoveVehicleUp(_testRover);
-        _planet.MoveVehicleLeft(_testRover);
+    [Theory]
+    [InlineData(10, 10, 11, 0)]
+    [InlineData(10, 20, -1, 19)]
+    public void CheckWrapping_ReturnsPotentialYCoordinate(int width, int height, int potentialYCoordinate, int expectedCoordinate)
+    {
+        // Given
+        Planet testPlanet = new Planet(width , height);
+        // When
+        var actualCoordinate = _planet.CheckWrapping(potentialYCoordinate, height);
+        // Then
+        Assert.Equal(expectedCoordinate, actualCoordinate);
+    }
 
-        Location _vehicleLocation = _planet.at(ExpectedX ,ExpectedY);
+    [Theory]
+    [InlineData(10, 10, 35, 5)]
+    [InlineData(20, 10, 10, 10)]
+    public void CheckWrapping_MovesVehicle_AroundThePlanet_Vertically(int width, int height, int totalNumberOfMoves, int expectedXCoordinate)
+    {
+        // Given
+        Planet testPlanet = new Planet(width , height);
+        IVehicle testRover = new Rover('N', new Directions());
+        testPlanet.AddObject(testRover, testPlanet.at(0, 0));
+        // When
+        for (var i = 0; i < totalNumberOfMoves; i++)
+        {
+            testPlanet.MoveVehicleUp(testRover);
+        }
+        var actualXCoordinate = testPlanet.GetLocationOfObject(testRover)._x;
+        // Then
+        Assert.Equal(expectedXCoordinate, actualXCoordinate);
+    }
 
-        var Expected = _planet.GetObjectAt(_vehicleLocation);
-        Assert.Equal(Expected, _testRover);
-
-        _planet.RemoveObject(_testRover);
+    [Theory]
+    [InlineData(10, 10, 1, 9)]
+    public void CheckWrapping_MovesVehicle_AroundThePlanet_Horizontally(int width, int height, int totalNumberOfMoves, int expectedYCoordinate)
+    {
+        // Given
+        Planet testPlanet = new Planet(width , height);
+        IVehicle testRover = new Rover('N', new Directions());
+        testPlanet.AddObject(testRover, testPlanet.at(0, 0));
+        // When
+        for (var i = 0; i < totalNumberOfMoves; i++)
+        {
+            testPlanet.MoveVehicleLeft(testRover);
+        }
+        var actualYCoordinate = testPlanet.GetLocationOfObject(testRover)._y;
+        // Then
+        Assert.Equal(expectedYCoordinate, actualYCoordinate);
     }
 
 }
-
-public class DummyDirections : IDirections 
-{
-    public (char,char)  WhenFacingNorth(char Command)
-    {
-        switch (Command)
-        {
-            case 'N':
-                return ('f', 'N');
-            case 'S':
-                return ('b', 'N');
-            case 'E':
-                return ('r', 'E');
-            case 'W':
-                return ('l', 'W');
-            default:
-                throw new Exception();
-        }
-    }
-    public (char,char)  WhenFacingSouth(char Command)
-    {
-        switch (Command)
-        {
-            case 'N':
-                return ('b', 'S');
-            case 'S':
-                return ('f', 'S');
-            case 'E':
-                return ('l', 'E');
-            case 'W':
-                return ('r', 'W');
-            default:
-                throw new Exception();
-        }
-    }
-    public (char,char)  WhenFacingEast(char Command)
-    {
-        return ('l', 'N');
-    }
-    public (char,char)  WhenFacingWest(char Command)
-    {
-        return ('r', 'N');
-    }
-}
-
-
 public class TestConsole : IConsole
     {
         public string Board = ""; 

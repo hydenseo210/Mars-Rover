@@ -4,7 +4,7 @@ namespace marsrover.Tests;
 
 public class RoverTest
 {
-    private IVehicle _testVehicle = new Rover('N', new Directions(new Commands()));
+    private IVehicle _testVehicle = new Rover('N', new Directions());
     [Theory]
     [InlineData('N','⍐')]
     [InlineData('S','⍗')]
@@ -40,13 +40,13 @@ public class RoverTest
     [InlineData('W', 'S','l')]
     [InlineData('W', 'E','b')]
     [InlineData('W', 'W','f')]
-    public void RoverReturns_CorrectAction_WhenGivenCommand_FacingNorth(char Direction, char Command, char Expected)
+    public void RoverReturns_CorrectAction_WhenGivenCommand(char CurrentDirectionRoverIsFacing, char Command, char Expected)
     {
-        //Assert
-        _testVehicle.ChangeDirection(Direction);
+        //Arrange
+        _testVehicle.ChangeDirection(CurrentDirectionRoverIsFacing);
         //Act
         var Actual = _testVehicle.Action(Command);
         //Assert
         Assert.Equal(Expected, Actual);
-    }
+    } // change to multiple tests different rover facing directions
 }

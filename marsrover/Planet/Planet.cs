@@ -14,7 +14,7 @@ public class Planet
         _width = width;
         _location = CreateJaggedArray<Location>(width, height);
         _objectLocations = new ObjectLocations();
-        if(_width <= 0 || _height <=0 ) throw new ArgumentOutOfRangeException(); //test
+        if(_width <= 0 || _height <=0 ) throw new ArgumentOutOfRangeException();
         initialisePlanet(_width, _height, true);
 
     }
@@ -80,55 +80,49 @@ public class Planet
     {
         if (Vehicle is null) throw new NullReferenceException();
         Location CurrentLocation = _objectLocations.LocationOf(Vehicle);
-        int wrappedXCoordinate = CheckWrapping(CurrentLocation._x - 1, _width); 
-        int wrappedYCoordinate = CheckWrapping(CurrentLocation._y, _height); 
-        _objectLocations.Move(Vehicle, _location[wrappedXCoordinate][wrappedYCoordinate]);
+        _objectLocations.Move(Vehicle, at(CurrentLocation._x - 1, CurrentLocation._y));
     }
 
     public void MoveVehicleDown(IVehicle Vehicle)
     {
         if (Vehicle is null) throw new NullReferenceException();
         Location CurrentLocation = _objectLocations.LocationOf(Vehicle);
-        int wrappedXCoordinate = CheckWrapping(CurrentLocation._x + 1, _width); 
-        int wrappedYCoordinate = CheckWrapping(CurrentLocation._y, _height);  
-        _objectLocations.Move(Vehicle, _location[wrappedXCoordinate][wrappedYCoordinate]);
+        _objectLocations.Move(Vehicle, at(CurrentLocation._x + 1, CurrentLocation._y));
     }
 
     public void MoveVehicleLeft(IVehicle Vehicle)
     {
         if (Vehicle is null) throw new NullReferenceException();
         Location CurrentLocation = _objectLocations.LocationOf(Vehicle);
-        int wrappedXCoordinate = CheckWrapping(CurrentLocation._x, _width); 
-        int wrappedYCoordinate = CheckWrapping(CurrentLocation._y + 1, _height);  
-        _objectLocations.Move(Vehicle, _location[wrappedXCoordinate][wrappedYCoordinate]);
+        _objectLocations.Move(Vehicle, at(CurrentLocation._x, CurrentLocation._y - 1));
     }
 
     public void MoveVehicleRight(IVehicle Vehicle)
     {
         if (Vehicle is null) throw new NullReferenceException();
         Location CurrentLocation = _objectLocations.LocationOf(Vehicle); 
-        int wrappedXCoordinate = CheckWrapping(CurrentLocation._x, _width); 
-        int wrappedYCoordinate = CheckWrapping(CurrentLocation._y - 1, _height); 
-        _objectLocations.Move(Vehicle, _location[wrappedXCoordinate][wrappedYCoordinate]);
+        _objectLocations.Move(Vehicle, at(CurrentLocation._x, CurrentLocation._y + 1));
     }
 
-    public Location at(int _x, int y) 
+    public Location at(int x, int y) 
     {
-		return _location[_x][y];
+        int wrappedXCoordinate = CheckWrapping(x, _width); 
+        int wrappedYCoordinate = CheckWrapping(y, _height); 
+		return _location[wrappedXCoordinate][wrappedYCoordinate];
 	}
 
-    public int CheckWrapping(int Coordinate, int Axis)
+    public int CheckWrapping(int potentialCoordinate, int boundary)
     {
-        if (Coordinate > Axis)
+        if (potentialCoordinate > boundary)
         {
             return 0;
         }
-        if (Coordinate < 0)
+        if (potentialCoordinate < 0)
         {
-            return Axis - 1;
+            return boundary - 1;
         }
-        return Coordinate;
-    }
+        return potentialCoordinate;
+    } //unit test
 
     public void draw(IConsole console)
     {
